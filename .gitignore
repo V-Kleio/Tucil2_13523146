@@ -1,0 +1,5 @@
+# compiled class
+/*.class
+
+#VSCode workspace settings
+/.vscode/
