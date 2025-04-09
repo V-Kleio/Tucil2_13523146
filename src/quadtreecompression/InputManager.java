@@ -85,15 +85,16 @@ public class InputManager {
         System.out.println("2. Metode mean absolute deviation (MAD)");
         System.out.println("3. Metode max pixel difference");
         System.out.println("4. Metode entropy");
+        System.out.println("5. Metode SSIM");
         
         int input = 0;
         boolean valid = false;
         while (!valid) {
-            System.out.print("(1 - 4)> ");
+            System.out.print("(1 - 5)> ");
             String line = userInput.nextLine();
             try {
                 input = Integer.parseInt(line);
-                if (input >= 1 && input <= 4) {
+                if (input >= 1 && input <= 5) {
                     valid = true;
                 } else {
                     System.out.println("Input harus berupa angka 1 sampai 4.");
@@ -108,6 +109,7 @@ public class InputManager {
             case 2 -> method = ErrorCalculationMethod.MAD;
             case 3 -> method = ErrorCalculationMethod.MAX_PIXEL_DIFFERENCE;
             case 4 -> method = ErrorCalculationMethod.ENTROPY;
+            case 5 -> method = ErrorCalculationMethod.SSIM;
         }
     }
 

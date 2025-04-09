@@ -83,6 +83,9 @@ public class Quadtree {
             case ErrorCalculationMethod.ENTROPY -> {
                 return calculateErrorByEntropy(x, y, width, height);
             }
+            case ErrorCalculationMethod.SSIM -> {
+                return calculateErrorBySSIM(x, y, width, height);
+            }
             default -> {
                 return 0.0;
             }
@@ -203,6 +206,48 @@ public class Quadtree {
         }
 
         return entropy;
+    }
+
+    private double calculateErrorBySSIM(int x, int y, int width, int height) {
+        final double K1 = 0.01;
+        final double K2 = 0.03;
+        final double L = 255;
+        final double C1 = (K1 * L) * (K1 * L);
+        final double C2 = (K2 * L) * (K2 * L);
+
+        int count = width * height;
+        double sumR = 0.0, sumG = 0.0, sumB = 0.0;
+        double sumSquaredR = 0.0, sumSquaredG = 0.0, sumSquaredB = 0.0;
+
+        for (int i = x; i < x + width; i++) {
+            for (int j = y; j < y + height; j++) {
+                int rgb = image.getRGB(i, j);
+                Color color = new Color(rgb);
+                double r = color.getRed();
+                double g = color.getGreen();
+                double b = color.getBlue();
+                sumR += r;
+                sumG += g;
+                sumB += b;
+                sumSquaredR += r * r;
+                sumSquaredG += g * g;
+                sumSquaredB += b * b;
+            }
+        }
+
+        double muR = sumR / count;
+        double muG = sumG / count;
+        double muB = sumB / count;
+
+        double varR = (sumSquaredR / count) - (muR * muR);
+        double varG = (sumSquaredG / count) - (muG * muG);
+        double varB = (sumSquaredB / count) - (muB * muB);
+
+        double ssimR = C2 / (varR + C2);
+        double ssimG = C2 / (varG + C2);
+        double ssimB = C2 / (varB + C2);
+
+        return (ssimR + ssimG + ssimB) / 3.0;
     }
 
     public int getTreeDepth() {
