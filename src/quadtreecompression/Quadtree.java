@@ -20,7 +20,7 @@ public class Quadtree {
 
     private Node root;
     private final BufferedImage image;
-    private double errorThreshold;
+    private final double errorThreshold;
     private final int minBlockSize;
     private final ErrorCalculationMethod method;
 
