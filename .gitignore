@@ -1,8 +1,11 @@
 # compiled class
-/bin/*.class
+/bin/
 
 #VSCode workspace settings
 /.vscode/
 
 #build script
 *.sh
+
+#test file (add manual on GitHub)
+/test/

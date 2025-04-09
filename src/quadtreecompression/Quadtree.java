@@ -49,6 +49,10 @@ public class Quadtree {
         return node;
     }
 
+    public void build() {
+        root = buildTree(0, 0, image.getWidth(), image.getHeight());
+    }
+
     private Color calculateAverageColor(int x, int y, int width, int height) {
         long sumR = 0, sumG = 0, sumB = 0;
         int count = 0;
@@ -238,5 +242,29 @@ public class Quadtree {
             count += countNodes(node.bottomRight);
         }
         return count;
+    }
+
+    public BufferedImage getCompressedImage() {
+        BufferedImage output = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
+        drawTree(root, output);
+        return output;
+    }
+
+    private void drawTree(Node node, BufferedImage output) {
+        if (node == null) {
+            return;
+        }
+        if (node.isLeaf) {
+            for (int i = node.x; i < node.x + node.width; i++) {
+                for (int j = node.y; j < node.y + node.height; j++) {
+                    output.setRGB(i, j, node.averageColor.getRGB());
+                }
+            }
+            return;
+        }
+        drawTree(node.topLeft, output);
+        drawTree(node.topRight, output);
+        drawTree(node.bottomLeft, output);
+        drawTree(node.bottomRight, output);
     }
 }

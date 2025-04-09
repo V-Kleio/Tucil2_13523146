@@ -12,6 +12,7 @@ public class InputManager {
     private float errorThreshold;
     private int minimumBlockSize;
     private String imageOutputPath;
+    private String imageInputPath;
 
     public BufferedImage getImage() {
         return image;
@@ -31,6 +32,10 @@ public class InputManager {
 
     public String getImageOutputPath() {
         return imageOutputPath;
+    }
+
+    public String getImageInputPath() {
+        return imageInputPath;
     }
 
     public void getUserImageOutputPath(Scanner userInput) {
@@ -143,6 +148,7 @@ public class InputManager {
                 if (image == null) {
                     System.out.println("Format gambar tidak didukung atau file rusak");
                 } else {
+                    imageInputPath = imagePath;
                     valid = true;
                 }
             } catch (IOException e) {
