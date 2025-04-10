@@ -33,9 +33,6 @@ public class Quadtree {
 
     private Node buildTree(int x, int y, int width, int height) {
         Node node = new Node(x, y, width, height);
-        // System.out.println(width);
-        // System.out.println(height);
-        // System.out.println(minBlockSize);
         double error = calculateError(x, y, width, height);
 
         if (error < errorThreshold || width * height <= minBlockSize || width <= 1 || height <= 1) {
