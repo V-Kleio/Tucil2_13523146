@@ -33,18 +33,29 @@ public class Quadtree {
 
     private Node buildTree(int x, int y, int width, int height) {
         Node node = new Node(x, y, width, height);
+        // System.out.println(width);
+        // System.out.println(height);
+        // System.out.println(minBlockSize);
         double error = calculateError(x, y, width, height);
 
-        if (error < errorThreshold || width * height <= minBlockSize) {
+        if (error < errorThreshold || width * height <= minBlockSize || width <= 1 || height <= 1) {
             node.isLeaf = true;
             node.averageColor = calculateAverageColor(x, y, width, height);
         } else {
-            int halfWidth = width / 2;
-            int halfHeight = height / 2;
+            int halfWidth = Math.max(1, (width / 2));
+            int halfHeight = Math.max(1, (height / 2));
             node.topLeft = buildTree(x, y, halfWidth, halfHeight);
-            node.topRight = buildTree(x + halfWidth, y, width - halfWidth, halfHeight);
-            node.bottomLeft = buildTree(x, y + halfHeight, halfWidth, height - halfHeight);
-            node.bottomRight = buildTree(x + halfWidth, y + halfHeight, width - halfWidth, height - halfHeight);
+            if (width > halfWidth) {
+                node.topRight = buildTree(x + halfWidth, y, width - halfWidth, halfHeight);
+            }
+
+            if (height > halfHeight) {
+                node.bottomLeft = buildTree(x, y + halfHeight, halfWidth, height - halfHeight);
+            }
+
+            if (width > halfWidth && height > halfHeight) {
+                node.bottomRight = buildTree(x + halfWidth, y + halfHeight, width - halfWidth, height - halfHeight);
+            }
         }
         return node;
     }
@@ -55,7 +66,7 @@ public class Quadtree {
 
     private Color calculateAverageColor(int x, int y, int width, int height) {
         long sumR = 0, sumG = 0, sumB = 0;
-        int count = 0;
+        int totalPixels = width * height;
         for (int i = x; i < x + width; i++) {
             for (int j = y; j < y + height; j++) {
                 int rgb = image.getRGB(i, j);
@@ -63,10 +74,9 @@ public class Quadtree {
                 sumR += color.getRed();
                 sumG += color.getGreen();
                 sumB += color.getBlue();
-                count++;
             }
         }
-        return new Color((int)(sumR/count), (int)(sumG/count), (int)(sumB/count));
+        return new Color((int)(sumR/totalPixels), (int)(sumG/totalPixels), (int)(sumB/totalPixels));
     }
 
     private double calculateError(int x, int y, int width, int height) {
@@ -97,7 +107,7 @@ public class Quadtree {
         double avgR = avgColor.getRed(), avgG = avgColor.getGreen(), avgB = avgColor.getBlue();
 
         double sumR = 0.0, sumG = 0.0, sumB = 0.0;
-        int count = 0;
+        int totalPixel = width * height;
 
         for (int i = x; i < x + width; i++) {
             for (int j = y; j < y + height; j++) {
@@ -109,13 +119,12 @@ public class Quadtree {
                 sumR += valueR * valueR;
                 sumG += valueG * valueG;
                 sumB += valueB * valueB;
-                count++;
             }
         }
 
-        double varR = sumR / count;
-        double varG = sumG / count;
-        double varB = sumB / count;
+        double varR = sumR / totalPixel;
+        double varG = sumG / totalPixel;
+        double varB = sumB / totalPixel;
 
         return (varR + varG + varB) / 3.0;
     }
@@ -125,7 +134,7 @@ public class Quadtree {
         double avgR = avgColor.getRed(), avgG = avgColor.getGreen(), avgB = avgColor.getBlue();
 
         double valueR = 0.0, valueG = 0.0, valueB = 0.0;
-        int count = 0;
+        int totalPixel = width * height;
 
         for (int i = x; i < x + width; i++) {
             for (int j = y; j < y + height; j++) {
@@ -134,13 +143,12 @@ public class Quadtree {
                 valueR += Math.abs(color.getRed() - avgR);
                 valueG += Math.abs(color.getGreen() - avgG);
                 valueB += Math.abs(color.getBlue() - avgB);
-                count++;
             }
         }
 
-        double madR = valueR / count;
-        double madG = valueG / count;
-        double madB = valueB / count;
+        double madR = valueR / totalPixel;
+        double madG = valueG / totalPixel;
+        double madB = valueB / totalPixel;
 
         return (madR + madG + madB) / 3.0;
     }

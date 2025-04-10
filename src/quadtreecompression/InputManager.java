@@ -13,6 +13,7 @@ public class InputManager {
     private int minimumBlockSize;
     private String imageOutputPath;
     private String imageInputPath;
+    private double minCompressionPercentage;
 
     public BufferedImage getImage() {
         return image;
@@ -36,6 +37,18 @@ public class InputManager {
 
     public String getImageInputPath() {
         return imageInputPath;
+    }
+
+    public double getMinCompressionPercentage() {
+        return minCompressionPercentage;
+    }
+
+    public void setErrorThreshold(float threshold) {
+        this.errorThreshold = threshold;
+    }
+
+    public void setMinimumBlockSize(int size) {
+        this.minimumBlockSize = size;
     }
 
     public void getUserImageOutputPath(Scanner userInput) {
@@ -160,6 +173,31 @@ public class InputManager {
 
             } catch (NumberFormatException e) {
                 System.out.println("Input tidak valid, silakan masukkan angka desimal!");
+                System.out.print("> ");
+            }
+        }
+    }
+
+    public void getUserMinimumCompressionPercentage(Scanner userInput) {
+        System.out.println("Masukkan persentase kompresi minimum yang diinginkan (0.0 - 1.0).");
+        System.out.println("0.0 = fitur ini dinonaktifkan, masukkan parameter secara manual");
+        System.out.print("> ");
+
+        boolean valid = false;
+        while (!valid) {
+            String input = userInput.nextLine();
+            try {
+                double value = Double.parseDouble(input);
+                if (value < 0.0 || value > 1.0) {
+                    System.out.println("Nilai harus antara 0.0 dan 1.0");
+                    System.out.print("> ");
+                    continue;
+                }
+
+                minCompressionPercentage = value;
+                valid = true;
+            } catch (NumberFormatException e) {
+                System.out.println("Input tidak valid, masukkan angka desimal.");
                 System.out.print("> ");
             }
         }
