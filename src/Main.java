@@ -13,9 +13,9 @@ public class Main {
         try (Scanner scanner = new Scanner(System.in)) {
             InputManager inputManager = new InputManager();
             inputManager.getUserImage(scanner);
+            inputManager.getUserErrorMethod(scanner);
             inputManager.getUserThreshold(scanner);
             inputManager.getUserMinimumBlockSize(scanner);
-            inputManager.getUserErrorMethod(scanner);
             inputManager.getUserImageOutputPath(scanner);
 
             File inputFile = new File(inputManager.getImageInputPath());

@@ -39,7 +39,7 @@ public class InputManager {
     }
 
     public void getUserImageOutputPath(Scanner userInput) {
-        System.out.println("Masukkan alamat absolut untuk gambar hasil kompresi!");
+        System.out.println("Masukkan alamat absolut untuk gambar hasil kompresi.");
         boolean valid = false;
         while (!valid) {
             System.out.print("> ");
@@ -60,7 +60,7 @@ public class InputManager {
     }
 
     public void getUserMinimumBlockSize(Scanner userInput) {
-        System.out.println("Masukkan luas blok minimum!");
+        System.out.println("Masukkan luas blok minimum.");
         System.out.print("> ");
         boolean valid = false;
         while (!valid) {
@@ -80,7 +80,7 @@ public class InputManager {
     }
 
     public void getUserErrorMethod(Scanner userInput) {
-        System.out.println("Pilih metode perhitungan error!");
+        System.out.println("Pilih metode perhitungan error.");
         System.out.println("1. Metode variance");
         System.out.println("2. Metode mean absolute deviation (MAD)");
         System.out.println("3. Metode max pixel difference");
@@ -114,14 +114,50 @@ public class InputManager {
     }
 
     public void getUserThreshold(Scanner userInput) {
-        System.out.println("Masukkan ambang batas kompresi!");
+        float minThreshold = 0.0f, maxThreshold = 0.0f;
+
+        switch (method) {
+            case ErrorCalculationMethod.VARIANCE -> {
+                minThreshold = 0.0f;
+                maxThreshold = 16256.25f;
+            }
+            case ErrorCalculationMethod.MAD -> {
+                minThreshold = 0.0f;
+                maxThreshold = 127.5f;
+            }
+            case ErrorCalculationMethod.MAX_PIXEL_DIFFERENCE -> {
+                minThreshold = 0.0f;
+                maxThreshold = 255;
+            }
+            case ErrorCalculationMethod.ENTROPY -> {
+                minThreshold = 0.0f;
+                maxThreshold = 8.0f;
+            }
+            case ErrorCalculationMethod.SSIM -> {
+                minThreshold = 0.0f;
+                maxThreshold = 1.0f;
+            }
+        }
+
+        System.out.println("Masukkan ambang batas kompresi.");
+        System.out.printf("Rentang untuk ambang batas kompresi: %.2f - %.2f\n", minThreshold, maxThreshold);
         System.out.print("> ");
+
         boolean valid = false;
         while (!valid) {
             String input = userInput.nextLine();
             try {
-                errorThreshold = Float.parseFloat(input);
+                float value = Float.parseFloat(input);
+
+                if (value < minThreshold || value > maxThreshold) {
+                    System.out.printf("Nilai %.2f berada di luar rentang (%.2f - %.2f).\n", value, minThreshold, maxThreshold);
+                    System.out.print("> ");
+                    continue;
+                }
+
+                errorThreshold = value;
                 valid = true;
+
             } catch (NumberFormatException e) {
                 System.out.println("Input tidak valid, silakan masukkan angka desimal!");
                 System.out.print("> ");
@@ -130,7 +166,7 @@ public class InputManager {
     }
 
     public void getUserImage(Scanner userInput) {
-        System.out.println("Masukkan alamat absolut gambar: ");
+        System.out.println("Masukkan alamat absolut gambar.");
         boolean valid = false;
         while (!valid) {
             System.out.print("> ");
