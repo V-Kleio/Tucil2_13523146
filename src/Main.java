@@ -154,6 +154,7 @@ public class Main {
 
         double initialPercentageRange = 0.02;
         double currentThreshold = minThreshold + (maxThreshold - minThreshold) * initialPercentageRange;
+        double currentCompressionPercentage = 0;
         double previousThreshold = currentThreshold;
 
         int currentBlockSize = 2;
@@ -175,7 +176,7 @@ public class Main {
 
         for (int attempt = 0; attempt < maxAttempts; attempt++) {
             if (attempt > 0) {
-                double increment = 1.0;
+                double increment;
 
                 if (range < 10) {
                     increment = 1.3;
@@ -185,16 +186,31 @@ public class Main {
                     increment = 2.0;
                 }
 
-                if (bestCompressionPercentage > 0 && bestCompressionPercentage < targetCompressionPercentage) {
-                    double diff = targetCompressionPercentage - bestCompressionPercentage;
+                boolean isAboveTarget = currentCompressionPercentage >= targetCompressionPercentage;
+
+                if (!isAboveTarget) {
+                    double diff = targetCompressionPercentage - currentCompressionPercentage;
                     if (diff > 0.3) {
                         increment *= 2;
                     } else if (diff < 0.1) {
-                        increment = 1.2;
+                        increment = 1.1;
                     }
-                }
-                else if (targetReached && attempt < maxAttempts - 1) {
-                    increment = 0.8;
+
+                    if (currentThreshold > maxThreshold * 0.7 && attempt % 2 == 0) {
+                        currentBlockSize = Math.min(currentBlockSize * 2, maxBlockSize);
+                    }
+                    else if (attempt % 3 == 0) {
+                        currentBlockSize = Math.min(currentBlockSize * 2, maxBlockSize);
+                    }
+                } else {
+                    double diff = currentCompressionPercentage - targetCompressionPercentage;
+                    if (diff > 0.3) {
+                        increment = 0.5;
+                    } else if (diff > 0.1) {
+                        increment = 0.7;
+                    } else {
+                        increment = 0.9;
+                    }
                     if (currentBlockSize > minBlockSize && attempt % 2 == 1) {
                         currentBlockSize = currentBlockSize / 2;
                     }
@@ -203,12 +219,6 @@ public class Main {
                 previousThreshold = currentThreshold;
                 currentThreshold = Math.min(currentThreshold * increment, maxThreshold);
 
-                if (!targetReached && currentThreshold > maxThreshold * 0.7 && attempt % 2 == 0) {
-                    currentBlockSize = Math.min(currentBlockSize * 2, maxBlockSize);
-                }
-                else if (!targetReached && attempt % 3 == 0) {
-                    currentBlockSize = Math.min(currentBlockSize * 2, maxBlockSize);
-                }
             }
 
             System.out.printf("\nPercobaan %d / %d: Threshold = %.2f (%.1f%% dari maksimum), Block Size = %d\n", attempt + 1, maxAttempts, currentThreshold, (currentThreshold / maxThreshold) * 100, currentBlockSize);
@@ -224,26 +234,26 @@ public class Main {
             ImageIO.write(compressedImage, extension, outputStream);
             long estimatedSize = outputStream.size();
 
-            double compressionPercentage = 1.0 - ((double)estimatedSize / originalSize);
-            System.out.printf("Hasil: Kompresi %.2f%% (Target: %.2f%%)\n", compressionPercentage * 100, targetCompressionPercentage * 100);
+            currentCompressionPercentage = 1.0 - ((double)estimatedSize / originalSize);
+            System.out.printf("Hasil: Kompresi %.2f%% (Target: %.2f%%)\n", currentCompressionPercentage * 100, targetCompressionPercentage * 100);
 
-            if (compressionPercentage > bestCompressionPercentage) {
-                bestCompressionPercentage = compressionPercentage;
+            if (currentCompressionPercentage > bestCompressionPercentage) {
+                bestCompressionPercentage = currentCompressionPercentage;
                 bestThreshold = currentThreshold;
                 bestBlockSize = currentBlockSize; 
             }
 
-            if (compressionPercentage >= targetCompressionPercentage) {
+            if (currentCompressionPercentage >= targetCompressionPercentage) {
                 targetReached = true;
                 
-                if (compressionPercentage < bestTargetCompressionPercentage) {
-                    bestTargetCompressionPercentage = compressionPercentage;
+                if (currentCompressionPercentage < bestTargetCompressionPercentage) {
+                    bestTargetCompressionPercentage = currentCompressionPercentage;
                     bestTargetThreshold = currentThreshold;
                     bestTargetBlockSize = currentBlockSize;
                 }
             }
 
-            if (attempt > 0 && compressionPercentage < bestCompressionPercentage * 0.08) {
+            if (attempt > 0 && currentCompressionPercentage < bestCompressionPercentage * 0.08) {
                 currentThreshold = (previousThreshold + currentThreshold) / 2;
                 if (currentBlockSize > minBlockSize) {
                     currentBlockSize = currentBlockSize / 2;
