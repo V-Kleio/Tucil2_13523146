@@ -14,6 +14,7 @@ public class InputManager {
     private String imageOutputPath;
     private String imageInputPath;
     private double minCompressionPercentage;
+    private int maxSearchAttempts = 10;
 
     public BufferedImage getImage() {
         return image;
@@ -41,6 +42,10 @@ public class InputManager {
 
     public double getMinCompressionPercentage() {
         return minCompressionPercentage;
+    }
+
+    public int getMaxSearchAttempts() {
+        return maxSearchAttempts;
     }
 
     public void setErrorThreshold(float threshold) {
@@ -198,6 +203,38 @@ public class InputManager {
                 valid = true;
             } catch (NumberFormatException e) {
                 System.out.println("Input tidak valid, masukkan angka desimal.");
+                System.out.print("> ");
+            }
+        }
+    }
+
+    public void getUserMaxSearchAttempts(Scanner userInput) {
+        System.out.println("Masukkan jumlah percobaan maksimum untuk pencarian persentase kompresi.");
+        System.out.println("Default: 10");
+        System.out.print("> ");
+
+        boolean valid = false;
+        while (!valid) {
+            String input = userInput.nextLine();
+
+            if (input.trim().isEmpty()) {
+                System.out.println("Menggunakan jumlah percobaan default: 10");
+                maxSearchAttempts = 10;
+                valid = true;
+                continue;
+            }
+
+            try {
+                int value = Integer.parseInt(input);
+                if (value < 1) {
+                    System.out.println("Jumlah percobaan minimal 1.");
+                    System.out.print("> ");
+                } else {
+                    maxSearchAttempts = value;
+                    valid = true;
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Input tidak valid, masukkan angka bulat.");
                 System.out.print("> ");
             }
         }

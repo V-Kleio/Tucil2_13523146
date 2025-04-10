@@ -19,6 +19,10 @@ public class Main {
 
             inputManager.getUserMinimumCompressionPercentage(scanner);
 
+            if (inputManager.getMinCompressionPercentage() > 0.0) {
+                inputManager.getUserMaxSearchAttempts(scanner);
+            }
+
             if (inputManager.getMinCompressionPercentage() <= 0.0) {
                 inputManager.getUserThreshold(scanner);
                 inputManager.getUserMinimumBlockSize(scanner);
@@ -156,12 +160,16 @@ public class Main {
         int minBlockSize = 1;
         int maxBlockSize = 32;
 
-        int maxAttempts = 10;
-        boolean success = false;
+        int maxAttempts = inputManager.getMaxSearchAttempts();
+        boolean targetReached = false;
 
         double bestCompressionPercentage = 0.0;
         double bestThreshold = currentThreshold;
         int bestBlockSize = currentBlockSize;
+
+        double bestTargetCompressionPercentage = Double.MAX_VALUE;
+        double bestTargetThreshold = 0;
+        int bestTargetBlockSize = 0;
 
         System.out.println("Mencoba beberapa parameter kompresi...");
 
@@ -185,14 +193,20 @@ public class Main {
                         increment = 1.2;
                     }
                 }
+                else if (targetReached && attempt < maxAttempts - 1) {
+                    increment = 0.8;
+                    if (currentBlockSize > minBlockSize && attempt % 2 == 1) {
+                        currentBlockSize = currentBlockSize / 2;
+                    }
+                }
 
                 previousThreshold = currentThreshold;
                 currentThreshold = Math.min(currentThreshold * increment, maxThreshold);
 
-                if (currentThreshold > maxThreshold * 0.7 && attempt % 2 == 0) {
+                if (!targetReached && currentThreshold > maxThreshold * 0.7 && attempt % 2 == 0) {
                     currentBlockSize = Math.min(currentBlockSize * 2, maxBlockSize);
                 }
-                else if (attempt % 3 == 0) {
+                else if (!targetReached && attempt % 3 == 0) {
                     currentBlockSize = Math.min(currentBlockSize * 2, maxBlockSize);
                 }
             }
@@ -220,8 +234,13 @@ public class Main {
             }
 
             if (compressionPercentage >= targetCompressionPercentage) {
-                success = true;
-                break;
+                targetReached = true;
+                
+                if (compressionPercentage < bestTargetCompressionPercentage) {
+                    bestTargetCompressionPercentage = compressionPercentage;
+                    bestTargetThreshold = currentThreshold;
+                    bestTargetBlockSize = currentBlockSize;
+                }
             }
 
             if (attempt > 0 && compressionPercentage < bestCompressionPercentage * 0.08) {
@@ -232,15 +251,17 @@ public class Main {
             }
         }
 
-        if (success) {
+        if (targetReached) {
             System.out.println("Berhasil menemukan parameter yang memenuhi target kompresi.");
+            inputManager.setErrorThreshold((float) bestTargetThreshold);
+            inputManager.setMinimumBlockSize(bestTargetBlockSize);
         } else {
             System.out.printf("\nTidak dapat mencapai target kompresi %.2f%% dalam %d percobaan.\n", (targetCompressionPercentage * 100), maxAttempts);
             System.out.printf("Kompresi yang dapat dicapai: %.2f%%\n", (bestCompressionPercentage * 100));
+            inputManager.setErrorThreshold((float) bestThreshold);
+            inputManager.setMinimumBlockSize(bestBlockSize);
         }
 
-        inputManager.setErrorThreshold((float) bestThreshold);
-        inputManager.setMinimumBlockSize(bestBlockSize);
-        System.out.printf("Menggunakan parameter: Threshold = %.2f, Block Size = %d\n", bestThreshold, bestBlockSize);
+        System.out.printf("Menggunakan parameter: Threshold = %.2f, Block Size = %d\n", inputManager.getErrorThreshold(), inputManager.getMinimumBlockSize());
     }
 }
