@@ -290,7 +290,7 @@ public class Quadtree {
     }
 
     public BufferedImage getCompressedImage() {
-        BufferedImage output = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
+        BufferedImage output = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
         drawTree(root, output);
         return output;
     }

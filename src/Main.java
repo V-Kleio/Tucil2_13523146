@@ -3,6 +3,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
+import javax.imageio.ImageIO;
 import quadtreecompression.InputManager;
 import quadtreecompression.Quadtree;
 
@@ -29,10 +30,11 @@ public class Main {
 
             BufferedImage compressedImage = quadtree.getCompressedImage();
             String outputPath = inputManager.getImageOutputPath();
+            String extension = outputPath.substring(outputPath.lastIndexOf('.') + 1).toLowerCase();
 
             File outputFile = new File(outputPath);
             try {
-                javax.imageio.ImageIO.write(compressedImage, "png", outputFile);
+                ImageIO.write(compressedImage, extension, outputFile);
             } catch (IOException e) {
                 System.out.println("Terjadi kesalahan saat menyimpan gambar: " + e.getMessage());
             }
@@ -41,13 +43,29 @@ public class Main {
             int treeDepth = quadtree.getTreeDepth();
             int nodeCount = quadtree.getNodeCount();
             double compressionPercentage = (1 - ((double) compressedSize / originalSize)) * 100;
+            double compressionRatio = (double) originalSize / compressedSize;
 
-            System.out.println("Execution time: " + executionTime);
-            System.out.println("Ukuran gambar sebelum: " + originalSize);
-            System.out.println("Ukuran gambar setelah: " + compressedSize);
-            System.out.printf("Persentase kompresi: %.2f%%\n", compressionPercentage);
-            System.out.println("Kedalaman pohon: " + treeDepth);
-            System.out.println("Banyak simpul pohon: " + nodeCount);
+            System.out.println("\n========== COMPRESSION STATISTICS ==========");
+            System.out.println("Waktu eksekusi               : " + executionTime + " ms");
+            System.out.println("Ukuran gambar original       : " + formatFileSize(originalSize));
+            System.out.println("Ukuran gambar hasil kompresi : " + formatFileSize(compressedSize));
+            System.out.printf("Rasio kompresi               : %.2f:1\n", compressionRatio);
+            System.out.printf("Persentase kompresi          : %.2f%%\n", compressionPercentage);
+            System.out.println("Kedalaman pohon              : " + treeDepth);
+            System.out.println("Banyak node                  : " + nodeCount);
         }
+    }
+
+    private static String formatFileSize(long size) {
+        final String[] units = new String[] {"B", "KB", "MB", "GB"};
+        int unitIndex = 0;
+        double dataSize = size;
+
+        while (dataSize >= 1024 && unitIndex < units.length - 1) {
+            dataSize /= 1024;
+            unitIndex++;
+        }
+
+        return String.format("%.2f %s", dataSize, units[unitIndex]);
     }
 }

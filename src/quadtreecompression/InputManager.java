@@ -61,7 +61,7 @@ public class InputManager {
 
     public void getUserMinimumBlockSize(Scanner userInput) {
         System.out.println("Masukkan luas blok minimum!");
-        System.out.println("> ");
+        System.out.print("> ");
         boolean valid = false;
         while (!valid) {
             String input = userInput.nextLine();
@@ -97,10 +97,10 @@ public class InputManager {
                 if (input >= 1 && input <= 5) {
                     valid = true;
                 } else {
-                    System.out.println("Input harus berupa angka 1 sampai 4.");
+                    System.out.println("Input harus berupa angka 1 sampai 5.");
                 }
             } catch (NumberFormatException e) {
-                System.out.println("Input tidak valid, silakan masukkan angka integer.");
+                System.out.println("Input tidak valid, silakan masukkan integer.");
             }
         }
 
@@ -115,7 +115,7 @@ public class InputManager {
 
     public void getUserThreshold(Scanner userInput) {
         System.out.println("Masukkan ambang batas kompresi!");
-        System.out.println("> ");
+        System.out.print("> ");
         boolean valid = false;
         while (!valid) {
             String input = userInput.nextLine();
