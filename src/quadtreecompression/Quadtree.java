@@ -247,7 +247,7 @@ public class Quadtree {
         double ssimG = C2 / (varG + C2);
         double ssimB = C2 / (varB + C2);
 
-        return (ssimR + ssimG + ssimB) / 3.0;
+        return 1.0 - (ssimR + ssimG + ssimB) / 3.0;
     }
 
     public int getTreeDepth() {
