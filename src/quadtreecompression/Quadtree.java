@@ -35,7 +35,7 @@ public class Quadtree {
         Node node = new Node(x, y, width, height);
         double error = calculateError(x, y, width, height);
 
-        if (error < errorThreshold || width <= minBlockSize || height <= minBlockSize) {
+        if (error < errorThreshold || width * height <= minBlockSize) {
             node.isLeaf = true;
             node.averageColor = calculateAverageColor(x, y, width, height);
         } else {
