@@ -71,11 +71,7 @@ public class Main {
             System.out.println("Banyak node                  : " + nodeCount);
 
             if (inputManager.getMinCompressionPercentage() > 0.0) {
-                System.out.println("\nTarget kompresi             : " + 
-                                 (inputManager.getMinCompressionPercentage() * 100) + "%");
-                System.out.println("Parameter yang digunakan.");
                 System.out.println("- Error threshold           : " + inputManager.getErrorThreshold());
-                System.out.println("- Minimum block size        : " + inputManager.getMinimumBlockSize());
             }
         } catch (Exception e) {
             System.err.println("Error: " + e.getMessage());
