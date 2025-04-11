@@ -19,10 +19,7 @@
 - [📸 Preview](#-preview)
 - [📥 Installation](#-installation)
 - [🚀 Usage](#-usage)
-- [🧩 Plugin System](#-plugin-system)
 - [📂 Project Structure](#-project-structure)
-- [🛣️ Roadmap](#️-roadmap)
-- [🧠 Contributing](#-contributing)
 - [👤 Author](#-author)
 
 ---
