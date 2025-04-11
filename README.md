@@ -105,7 +105,7 @@ The program will prompt you for the following inputs:
 4. Target Compression Percentage (optional): If specified, the program will automatically find parameters to achieve this target
 5. Maximum Search Attempts (if target compression is specified): How many iterations to use for finding optimal parameters
 6. Error Threshold (if target compression is not specified): The threshold below which a region is considered uniform
-7. Minimum Block Size: The smallest allowable block dimension
+7. Minimum Block Size: The smallest allowable block area
 8. Output Image Path: Where to save the compressed image 
 
 Example:
