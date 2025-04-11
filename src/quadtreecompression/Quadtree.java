@@ -260,7 +260,8 @@ public class Quadtree {
     }
 
     public int getTreeDepth() {
-        return countTreeDepth(root);
+        int depth = countTreeDepth(root);
+        return depth > 0 ? depth - 1 : 0;
     }
 
     private int countTreeDepth(Node node) {
