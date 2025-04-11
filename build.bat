@@ -9,3 +9,5 @@ del sources.txt
 
 echo Running the main program...
 java -cp bin Main
+
+pause
