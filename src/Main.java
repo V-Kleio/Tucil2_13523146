@@ -16,18 +16,14 @@ public class Main {
             InputManager inputManager = new InputManager();
             inputManager.getUserImage(scanner);
             inputManager.getUserErrorMethod(scanner);
-
             inputManager.getUserMinimumCompressionPercentage(scanner);
-
             if (inputManager.getMinCompressionPercentage() > 0.0) {
                 inputManager.getUserMaxSearchAttempts(scanner);
             }
-
             if (inputManager.getMinCompressionPercentage() <= 0.0) {
                 inputManager.getUserThreshold(scanner);
             }
             inputManager.getUserMinimumBlockSize(scanner);
-
             inputManager.getUserImageOutputPath(scanner);
 
             File inputFile = new File(inputManager.getImageInputPath());
